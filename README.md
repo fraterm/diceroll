@@ -1,12 +1,12 @@
-# Dieroll
+# diceroll
 
-## Command Line Dice Rolling Utility
+## A C++ Command Line Dice Rolling Utility
 
-* using the argparse argument parser after a hard fought attempt at using boost program_options 
-* still looking at argument parsers, don't really want to write my own
+* uses the args argument parser as a CLI parser API https://taywee.github.io/args
+* options will likely be similar to rolldice
 
 ## DICE STRING FORMATS
-* The dice string uses the following format by default:
+* The dice string uses the following format by default but will support different dice string formats:
 ```
 {#x}{#}d[#|%]{*#}{+/-#}{s#}
 ```
