@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 16.0.4, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   width="306px"
+   height="344.35px"
+   viewBox="0 0 306 344.35"
+   enable-background="new 0 0 306 344.35"
+   xml:space="preserve"
+   sodipodi:docname="Diceroll_Logo.svg"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs168"><rect
+     x="-311.95308"
+     y="88.421845"
+     width="240.56492"
+     height="47.523855"
+     id="rect10240" /></defs><sodipodi:namedview
+   id="namedview166"
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1.0"
+   inkscape:pageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   showgrid="false"
+   inkscape:zoom="1.6494845"
+   inkscape:cx="58.806251"
+   inkscape:cy="172.175"
+   inkscape:window-width="1920"
+   inkscape:window-height="1048"
+   inkscape:window-x="1920"
+   inkscape:window-y="0"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Layer_1" />
+<path
+   fill="#00599C"
+   d="M302.107,258.262c2.401-4.159,3.893-8.845,3.893-13.053V99.14c0-4.208-1.49-8.893-3.892-13.052L153,172.175  L302.107,258.262z"
+   id="path147" />
+<path
+   fill="#004482"
+   d="M166.25,341.193l126.5-73.034c3.644-2.104,6.956-5.737,9.357-9.897L153,172.175L3.893,258.263  c2.401,4.159,5.714,7.793,9.357,9.896l126.5,73.034C147.037,345.401,158.963,345.401,166.25,341.193z"
+   id="path149" />
+<path
+   fill="#659AD2"
+   d="M302.108,86.087c-2.402-4.16-5.715-7.793-9.358-9.897L166.25,3.156c-7.287-4.208-19.213-4.208-26.5,0  L13.25,76.19C5.962,80.397,0,90.725,0,99.14v146.069c0,4.208,1.491,8.894,3.893,13.053L153,172.175L302.108,86.087z"
+   id="path151" />
+
+
+
+<text
+   xml:space="preserve"
+   id="text10238"
+   style="fill:black;fill-opacity:1;line-height:1.25;stroke:none;font-family:sans-serif;font-style:normal;font-weight:normal;font-size:40px;white-space:pre;shape-inside:url(#rect10240)" /><text
+   xml:space="preserve"
+   style="font-style:normal;font-weight:normal;font-size:67.9183px;line-height:1.25;font-family:sans-serif;fill:#659ad2;fill-opacity:1;stroke:#000000;stroke-width:1.098;stroke-opacity:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
+   x="-3.2114568"
+   y="185.81404"
+   id="text13854"
+   transform="scale(0.95929933,1.0424275)"><tspan
+     sodipodi:role="line"
+     id="tspan13852"
+     x="-3.2114568"
+     y="185.81404"
+     style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:67.9183px;font-family:FreeMono;-inkscape-font-specification:'FreeMono, Bold Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#659ad2;fill-opacity:1;stroke:#000000;stroke-width:1.098;stroke-opacity:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none">diceroll</tspan></text></svg>
