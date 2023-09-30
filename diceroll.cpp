@@ -1,14 +1,18 @@
 #include <iostream>
 #include <string>
-#include <regex>
+//#include <regex> //-- SRELL testing
+// WHY no named capture groups in std::regex????? -- much sadness
 #include <random>
 #include <vector>
 
 // args library for command line parsing https://github.com/taywee/args 
 #include "args.hxx"
+// SRELL std regex like library by a kenotsuki https://akenotsuki.com
+#include "srell.hpp"
 // function declarations
-std::string rollDiceString(std::string);
-int roll_dice(int sides, int quantity);
+std::string parseDiceString(std::string);
+
+int rollDice(long sides, long quantity);
 
 int main(int argc, char *argv[])
 {
@@ -16,11 +20,19 @@ int main(int argc, char *argv[])
 	// initially assume a single dice string
 	// eventually become a vector of possibly multiple dicestrings
 	std::string dice_string = "";
+
+	bool version_bool = false;
+	bool exhaustive_bool = false;
+	bool interactive_bool = false;
 	bool help_bool = false;
 
-	args::ArgumentParser parser("diceroll program", "This goes after the options.");
+	// set up the argument parser and arguments
+	args::ArgumentParser parser("diceroll program", "@TODO Epilogue.");
 	args::HelpFlag help(parser, "help", "Display this help menu", {'h', "help"});
-	args::Group positionals(parser, "positionals" );
+	args::Flag version(parser, "version", "@TODO Display the version diceroll", {'v', "version"});
+	args::Flag exhaustive(parser, "exhaustive", "@TODO Set the Exhaustive output of each die separately as well as operations and totals", {'e',"exhaustive"});
+	args::Flag interactive(parser, "interactive", "@TODO Set the Exhaustive output of each die separately as well as operations and totals", {'i',"interactive"});
+	args::Group positionals(parser, "dice roll string" );
 	args::PositionalList<std::string> diceStringList(positionals, "dice strings", "parseable dice roll description strings");
 	args::CompletionFlag completion(parser, {"complete"});
 	try
@@ -29,11 +41,9 @@ int main(int argc, char *argv[])
 		for (auto &&diceString : diceStringList)
 		{
 			// for now echo entered dice strings
-			std::cout << "running rollDiceString(" << diceString << ")\n";
-			std::string result = rollDiceString(diceString);
+			std::cout << "running parseDiceString(" << diceString << ")\n";
+			std::string result = parseDiceString(diceString);
 			std::cout << "result:" << result << "\n";
-			
-			
 		}
 		// after parsing print an end line
 	}
@@ -53,35 +63,67 @@ int main(int argc, char *argv[])
 }
 
 // function definitions
-std::string rollDiceString(std::string diceString){
-	std::string resultString = "nothing yet";
-	// validate and parse the dice string to generate random numbers properly
-	// basic_regex matching 1D6 or 1D20 or considering 1D to be a default D6 or 1d
-	// to be digested and resolved accordingly
-	std::cout << "in rollDiceString(" << diceString << ")\n";
-	// variables important for the simple match expressions 
-	long numthrows; long quantity; long sides;
-	// should match  1d6, 2D6, 15D5, D6
-	try {
-		// default to the c program rolldice dicestring to start
-		std::regex diceExpr("^(\\d*)[x|X]*(\\d*)[d|D](\\d*)$" );
-		std::smatch match;
-		if (std::regex_search(diceString, match, diceExpr) && match.size() >= 1) {
-			std::cout << "regex matched" << std::endl;
-			std::cout << "numthrows: " << match.str(1) << " "
-				<< "quantity: " << match.str(2) << " "
-				<< "sides:" << match.str(3) << std::endl;
-			numthrows = std::stol (match.str(1));
-			quantity = std::stol (match.str(2));
-			sides = std::stol (match.str(3));
+std::string parseDiceString(std::string diceString){
+	long numThrows = 1; long numDice = 1; long numSides = 6;
+	std::string resultString = "";
+	// compose a suitable rolldice compatible regex with named groups over several lines
+	std::string regexString = 
 
-			std::cout << "roll_dice("<< sides <<","<< quantity << ")" << roll_dice(sides, quantity) << std::endl;
+			"^"
+			"(?<throwgroup>(?<throws>(\\d){1,})(?<throwch>[x|X]){1}){0,}"
+			"(?<dicegroup>(?<numdice>\\d{1,})(?<dicechar>d|D){1}(?<numsidesortype>\\d{0,}|%{1})){0,}"
+			"$";
+
+
+		//"^"
+		//"(?<throwgroup>(?<numthrows>[[:digit:]]{1,})([x|X]{1}){0,1})"
+		//"(?<dicegroup>(?<numdice>[[:digit:]])(?<dicechar>[d|D]{1})(?<numsides>[[:digit:]{0,}|%{1}])){0,1}"
+		//"(?<endgroup>.{0,})"
+		//"$";
+	std::cout << "in parseDiceString(" << diceString << ")\n";
+	try {
+		//
+		srell::regex e(regexString);
+		// static match
+		srell::smatch m;
+		if (srell::regex_search(diceString, m, e)) {
+			std::cout << "regex_search true: " << std::endl;
+				std::cout << "m.size is:" << m.size() << std::endl;
+				for (int i=0; i < m.size(); i++) {
+					std::cout << "m.str(" << i << "):" << m.str(i) << std::endl;
+				}
+				//std::cout << "m.str(0):" << m.str(0) << std::endl;
+				//std::cout << "m.str(1):" << m.str(1) << std::endl;
+				//std::cout << "m.str(2):" << m.str(2) << std::endl;
+				//std::cout << "m.str(3):" << m.str(3) << std::endl;
+				//std::cout << "m.str(4):" << m.str(4) << std::endl;
+				//std::cout << "m.str(5):" << m.str(5) << std::endl;
+				//std::cout << "m.str(6):" << m.str(6) << std::endl;
+				//std::cout << "m.str(7):" << m.str(7) << std::endl;
+				std::cout << "throwgroup: " << m.str("throwgroup") << " " << std::endl;
+				std::cout << "\tthrows: " << m.str("throws") << " " << std::endl;
+				std::cout << "\tthrowch: " << m.str("throwch") << " " << std::endl;
+				std::cout << "dicegroup: " << m.str("dicegroup") << " " << std::endl;
+				std::cout << "\tnumdice: " << m.str("numdice") << " " << std::endl;
+				std::cout << "\tdicechar: " << m.str("dicechar") << " " << std::endl;
+				std::cout << "\tnumsidesortype: " << m.str("numsidesortype") << " " << std::endl;
+				//std::cout << "endgroup: " << m.str("endgroup") << " " << std::endl;
+
+
+
+				//std::cout << "matchstr: " << m.str("matchstr") << " " <<
+				//std::endl;
+				//if ( m.str("throwgroup") ) {
+					//std::cout << "m.size() " << m.size << std::endl;
+					//std::cout << "m.match_results.size= " << m.match_results();
+				//}else{
+				//}
 		}else{
-			std::cout << "regex didn't match" << std::endl;
+			std::cout << "regex_search false" << std::endl;
 		}
-	} catch (std::regex_error& e) {
+	} catch (srell::regex_error& e) {
 		// Syntax error in the regular expression
-		std::cerr << "std::regex_error occurred:" << e.what() << std::endl;
+		std::cerr << "srell::regex_error occurred:" << e.what() << std::endl;
 		// Crash / Return / 
 		return "";
 	}
@@ -89,7 +131,7 @@ std::string rollDiceString(std::string diceString){
 	return resultString;	
 }
 
-int roll_dice(int sides, int quantity) {
+int rollDice(long sides, long quantity) {
   std::random_device rd;
   std::mt19937 gen(rd());
   std::uniform_int_distribution<> dis(1, sides);

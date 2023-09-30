@@ -16,6 +16,15 @@ local.properties
 # Locally stored "Eclipse launch configurations"
 *.launch
 
+# Codelite IDE
+*.workspace
+
+# Codelite IDE
+.codelite/
+
+# Ctags
+.ctagsd/
+
 # PyDev specific (Python IDE for Eclipse)
 *.pydevproject
 
@@ -87,6 +96,7 @@ local.properties
 *.lib
 
 # Executables
+diceroll
 *.exe
 *.out
 *.app
