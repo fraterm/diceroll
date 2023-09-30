@@ -1,6 +1,5 @@
 # diceroll
-![Alt text](./Diceroll_Logo.svg)
-<img src="./Diceroll_Logo.svg">
+![Diceroll Logo](./Diceroll_Logo.svg)
 
 ## A C++ Command Line Dice Rolling Utility
 
