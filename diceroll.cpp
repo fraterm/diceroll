@@ -113,30 +113,32 @@ std::string parseDiceString(std::string diceString) {
       long numDice = 1;
       long numSides = 6;
 
-      std::cout << "c_str run on throws becomes:" << m.str("throws").std::string::c_str() << std::endl;
-      std::cout << std::boolalpha; // turn on printing boolean true/false rather than 1/0
-      std::cout << "empty test on throws:" << m.str("throws").std::string::empty() << std::endl;
-      std::cout << std::noboolalpha; // turn off printing boolean true/false rather than 1/0
+      std::cout << "c_str run on throws becomes:"
+                << m.str("throws").std::string::c_str() << std::endl;
+      std::cout << std::boolalpha; // turn on printing boolean true/false rather
+                                   // than 1/0
+      std::cout << "empty test on throws:"
+                << m.str("throws").std::string::empty() << std::endl;
+      std::cout << std::noboolalpha; // turn off printing boolean true/false
+                                     // rather than 1/0
 
-      if (!m.str("throws").std::string::empty()){
-	  numThrows = std::stol(m.str("throws"));
+      if (!m.str("throws").std::string::empty()) {
+        numThrows = std::stol(m.str("throws"));
       }
 
-      if (!m.str("numdice").std::string::empty()){
-	  numDice = std::stol(m.str("numdice"));
+      if (!m.str("numdice").std::string::empty()) {
+        numDice = std::stol(m.str("numdice"));
       }
 
-      if (!m.str("sidestype").std::string::empty()){
-	  // not empty and is not a literal single % character.
+      if (!m.str("sidestype").std::string::empty()) {
+        // not empty and is not a literal single % character.
 
-	  if (m.str("sidestype")== "%"){
-	      numSides = 100;
-	  }else{
-	      numSides = std::stol(m.str("throws").std::string::c_str());
-	  }
+        if (m.str("sidestype") == "%") {
+          numSides = 100;
+        } else {
+          numSides = std::stol(m.str("throws").std::string::c_str());
+        }
       }
-
-
 
       // std::cout << "matchstr: " << m.str("matchstr") << " " <<
       // std::endl;
