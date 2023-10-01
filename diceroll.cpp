@@ -66,9 +66,6 @@ int main(int argc, char *argv[]) {
 
 // function definitions
 std::string parseDiceString(std::string diceString) {
-  long numThrows = 1;
-  long numDice = 1;
-  long numSides = 6;
   std::string resultString = "";
   // compose a suitable rolldice compatible regex with named groups over
   // several lines
@@ -76,7 +73,7 @@ std::string parseDiceString(std::string diceString) {
 
       "^"
       "(?<throwgroup>(?<throws>(\\d){1,})(?<throwch>[x|X]){1}){0,}"
-      "(?<dicegroup>(?<numdice>\\d{1,})(?<dicechar>d|D){1}(?<numsidesortype>"
+      "(?<dicegroup>(?<numdice>\\d{1,})(?<dicechar>d|D){1}(?<sidestype>"
       "\\d{0,}|%{1})){0,}"
       "$";
 
@@ -111,10 +108,35 @@ std::string parseDiceString(std::string diceString) {
       std::cout << "dicegroup: " << m.str("dicegroup") << " " << std::endl;
       std::cout << "\tnumdice: " << m.str("numdice") << " " << std::endl;
       std::cout << "\tdicechar: " << m.str("dicechar") << " " << std::endl;
-      std::cout << "\tnumsidesortype: " << m.str("numsidesortype") << " "
-                << std::endl;
-      // std::cout << "endgroup: " << m.str("endgroup") << " " <<
-      // std::endl;
+      std::cout << "\tsidestype: " << m.str("sidestype") << " " << std::endl;
+      long numThrows = 1;
+      long numDice = 1;
+      long numSides = 6;
+
+      std::cout << "c_str run on throws becomes:" << m.str("throws").std::string::c_str() << std::endl;
+      std::cout << std::boolalpha; // turn on printing boolean true/false rather than 1/0
+      std::cout << "empty test on throws:" << m.str("throws").std::string::empty() << std::endl;
+      std::cout << std::noboolalpha; // turn off printing boolean true/false rather than 1/0
+
+      if (!m.str("throws").std::string::empty()){
+	  numThrows = std::stol(m.str("throws"));
+      }
+
+      if (!m.str("numdice").std::string::empty()){
+	  numDice = std::stol(m.str("numdice"));
+      }
+
+      if (!m.str("sidestype").std::string::empty()){
+	  // not empty and is not a literal single % character.
+
+	  if (m.str("sidestype")== "%"){
+	      numSides = 100;
+	  }else{
+	      numSides = std::stol(m.str("throws").std::string::c_str());
+	  }
+      }
+
+
 
       // std::cout << "matchstr: " << m.str("matchstr") << " " <<
       // std::endl;
