@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <sstream>
 //#include <regex> //-- SRELL testing
 // WHY no named capture groups in std::regex????? -- much sadness
 #include <random>
@@ -9,10 +10,16 @@
 #include "args.hxx"
 // SRELL std regex like library by a kenotsuki https://akenotsuki.com
 #include "srell.hpp"
+// Global args with g_arg_ prefix
+  bool g_arg_version_flag = false;
+  bool g_arg_separate_flag = false;
+  bool g_arg_interactive_flag = false;
 // function declarations
 std::string parseDiceString(std::string);
 
-int rollDice(long sides, long quantity);
+std::string performDiceRoll(long throws, long dice, long sides);
+
+int rollDie(long sides);
 
 int main(int argc, char *argv[]) {
   // help option
@@ -20,30 +27,26 @@ int main(int argc, char *argv[]) {
   // eventually become a vector of possibly multiple dicestrings
   std::string dice_string = "";
 
-  bool version_bool = false;
-  bool exhaustive_bool = false;
-  bool interactive_bool = false;
-  bool help_bool = false;
 
   // set up the argument parser and arguments
-  args::ArgumentParser parser("diceroll program", "@TODO Epilogue.");
-  args::HelpFlag help(parser, "help", "Display this help menu", {'h', "help"});
-  args::Flag version(parser, "version", "@TODO Display the version diceroll",
+  args::ArgumentParser argsParser("diceroll program", "@TODO Epilogue.");
+  args::HelpFlag help(argsParser, "help", "Display this help menu", {'h', "help"});
+  args::Flag version(argsParser, "version", "@TODO Display the version diceroll",
                      {'v', "version"});
-  args::Flag exhaustive(parser, "exhaustive",
-                        "@TODO Set the Exhaustive output of each die "
+  args::Flag separate(argsParser, "separate",
+                        "print out the Throw/Roll number and separate output of each die "
                         "separately as well as operations and totals",
-                        {'e', "exhaustive"});
-  args::Flag interactive(parser, "interactive",
-                         "@TODO Set the Exhaustive output of each die "
-                         "separately as well as operations and totals",
+                        {'s', "separate"});
+  args::Flag interactive(argsParser, "interactive",
+                         "@TODO interactive mode, diceroll terminal"
+                         "interacts with the user in a command line way",
                          {'i', "interactive"});
-  args::Group positionals(parser, "dice roll string");
+  args::Group positionals(argsParser, "dice roll string");
   args::PositionalList<std::string> diceStringList(
       positionals, "dice strings", "parseable dice roll description strings");
-  args::CompletionFlag completion(parser, {"complete"});
+  args::CompletionFlag completion(argsParser, {"complete"});
   try {
-    parser.ParseCLI(argc, argv);
+    argsParser.ParseCLI(argc, argv);
     for (auto &&diceString : diceStringList) {
       // for now echo entered dice strings
       std::cout << "running parseDiceString(" << diceString << ")\n";
@@ -53,12 +56,15 @@ int main(int argc, char *argv[]) {
     // after parsing print an end line
   } catch (const args::Help &) {
     // print the pretty parsers autoconstructed help message then cleanly
-    // exit --
-    std::cout << parser;
+    // exit -- no need for a help flag even, just default args:: behavior
+    std::cout << argsParser;
     return 0;
+  //} catch (const args::){} // g_arg_interactive_flag
+  //} catch (const args::){} // g_arg_version_flag
+  //} catch (const args::){} // g_arg_separate_flag
   } catch (const args::ParseError &e) {
     std::cerr << e.what() << std::endl;
-    std::cerr << parser;
+    std::cerr << argsParser;
     return 1;
   }
   return 0;
@@ -72,74 +78,69 @@ std::string parseDiceString(std::string diceString) {
   std::string regexString =
 
       "^"
-      "(?<throwgroup>(?<throws>(\\d){1,})(?<throwch>[x|X]){1}){0,}"
-      "(?<dicegroup>(?<numdice>\\d{1,})(?<dicechar>d|D){1}(?<sidestype>"
-      "\\d{0,}|%{1})){0,}"
+      "(?<throwgroup>(?<throws>([0-9]){1,})(?<throwch>[x|X]){1}){0,}"
+      "(?<dicegroup>(?<numdice>[0-9]{1,})(?<dicechar>d|D){1}(?<sidestype>"
+      "[0-9]{0,}|%{1})){0,}"
       "$";
 
-  //"^"
-  //"(?<throwgroup>(?<numthrows>[[:digit:]]{1,})([x|X]{1}){0,1})"
-  //"(?<dicegroup>(?<numdice>[[:digit:]])(?<dicechar>[d|D]{1})(?<numsides>[[:digit:]{0,}|%{1}])){0,1}"
-  //"(?<endgroup>.{0,})"
-  //"$";
   std::cout << "in parseDiceString(" << diceString << ")\n";
   try {
     //
-    srell::regex e(regexString);
+    srell::regex expression(regexString);
     // static match
-    srell::smatch m;
-    if (srell::regex_search(diceString, m, e)) {
+    srell::smatch staticmatch;
+    if (srell::regex_search(diceString, staticmatch, expression)) {
       std::cout << "regex_search true: " << std::endl;
-      std::cout << "m.size is:" << m.size() << std::endl;
-      for (int i = 0; i < m.size(); i++) {
-        std::cout << "m.str(" << i << "):" << m.str(i) << std::endl;
+      std::cout << "m.size is:" << staticmatch.size() << std::endl;
+      for (int i = 0; i < staticmatch.size(); i++) {
+        std::cout << "m.str(" << i << "):" << staticmatch.str(i) << std::endl;
       }
-      // std::cout << "m.str(0):" << m.str(0) << std::endl;
-      // std::cout << "m.str(1):" << m.str(1) << std::endl;
-      // std::cout << "m.str(2):" << m.str(2) << std::endl;
-      // std::cout << "m.str(3):" << m.str(3) << std::endl;
-      // std::cout << "m.str(4):" << m.str(4) << std::endl;
-      // std::cout << "m.str(5):" << m.str(5) << std::endl;
-      // std::cout << "m.str(6):" << m.str(6) << std::endl;
-      // std::cout << "m.str(7):" << m.str(7) << std::endl;
-      std::cout << "throwgroup: " << m.str("throwgroup") << " " << std::endl;
-      std::cout << "\tthrows: " << m.str("throws") << " " << std::endl;
-      std::cout << "\tthrowch: " << m.str("throwch") << " " << std::endl;
-      std::cout << "dicegroup: " << m.str("dicegroup") << " " << std::endl;
-      std::cout << "\tnumdice: " << m.str("numdice") << " " << std::endl;
-      std::cout << "\tdicechar: " << m.str("dicechar") << " " << std::endl;
-      std::cout << "\tsidestype: " << m.str("sidestype") << " " << std::endl;
-      long numThrows = 1;
-      long numDice = 1;
-      long numSides = 6;
+      /* @TODO wrap with verbose arg */
+      std::cout << "throwgroup: " << staticmatch.str("throwgroup") << " " << std::endl;
+      std::cout << "\tthrows: " << staticmatch.str("throws") << " " << std::endl;
+      std::cout << "\tthrowch: " << staticmatch.str("throwch") << " " << std::endl;
+      std::cout << "dicegroup: " << staticmatch.str("dicegroup") << " " << std::endl;
+      std::cout << "\tnumdice: " << staticmatch.str("numdice") << " " << std::endl;
+      std::cout << "\tdicechar: " << staticmatch.str("dicechar") << " " << std::endl;
+      std::cout << "\tsidestype: " << staticmatch.str("sidestype") << " " << std::endl;
+
+      // initialize throw dice and sides values to sensible defaults if not parsed
+      long numThrows = 1; long numDice = 1; long numSides = 6;
 
       std::cout << "c_str run on throws becomes:"
-                << m.str("throws").std::string::c_str() << std::endl;
+                << staticmatch.str("throws").std::string::c_str() << std::endl;
       std::cout << std::boolalpha; // turn on printing boolean true/false rather
                                    // than 1/0
       std::cout << "empty test on throws:"
-                << m.str("throws").std::string::empty() << std::endl;
+                << staticmatch.str("throws").std::string::empty() << std::endl;
       std::cout << std::noboolalpha; // turn off printing boolean true/false
                                      // rather than 1/0
 
-      if (!m.str("throws").std::string::empty()) {
-        numThrows = std::stol(m.str("throws"));
+      if (!staticmatch.str("throws").std::string::empty()) {
+        std::cout << "throws is not empty" << std::endl;
+        numThrows = std::stol(staticmatch.str("throws"));
+        std::cout << "numThrows is now:" << numThrows << std::endl;
       }
-
-      if (!m.str("numdice").std::string::empty()) {
-        numDice = std::stol(m.str("numdice"));
+      if (!staticmatch.str("numdice").std::string::empty()) {
+        std::cout << "numdice is not empty" << std::endl;
+        numDice = std::stol(staticmatch.str("numdice"));
+        std::cout << "numDice is now:" << numDice << std::endl;
       }
-
-      if (!m.str("sidestype").std::string::empty()) {
+      if (!staticmatch.str("sidestype").std::string::empty()) {
+        std::cout << "sidestype is not empty" << std::endl;
         // not empty and is not a literal single % character.
-
-        if (m.str("sidestype") == "%") {
+        if (staticmatch.str("sidestype") == "\%") {
+          std::cout << "sidestype is a fancy % character" << std::endl;
           numSides = 100;
+          std::cout << "numSides was a fancy % and is now:" << numSides
+                    << std::endl;
         } else {
-          numSides = std::stol(m.str("throws").std::string::c_str());
+          numSides = std::stol(staticmatch.str("sidestype"));
         }
+        std::cout << "numSides is now:" << numSides << std::endl;
       }
-
+      // do/While
+	    std::cout << "numThrows:" << numThrows << std::endl;
       // std::cout << "matchstr: " << m.str("matchstr") << " " <<
       // std::endl;
       // if ( m.str("throwgroup") ) {
@@ -149,9 +150,10 @@ std::string parseDiceString(std::string diceString) {
       //}
     } else {
       std::cout << "regex_search false" << std::endl;
+      return "";
     }
   } catch (srell::regex_error &e) {
-    // Syntax error in the regular expression
+    // Syntax error in the regular expressioa
     std::cerr << "srell::regex_error occurred:" << e.what() << std::endl;
     // Crash / Return /
     return "";
@@ -159,16 +161,34 @@ std::string parseDiceString(std::string diceString) {
   // q = number of dice, s = sides, m=post modifier
   return resultString;
 }
+std::string performDiceRoll(long throws, long dice, long sides ) {
+      // if g_opt_s is true
+      std::string resultStringStream = "";
+      do {
+        // per throw (at least once)
+        do {
+          int singleDieResult = rollDie(sides);
 
-int rollDice(long sides, long quantity) {
+          resultString.append("");
+          numDice--;
+        } while (numDice);
+        // set up a string stream with which to 
+        // append die results 
+        resultStringStream << "";
+        // decrement throw
+        numThrows--;
+      } while (numThrows);
+  return "";
+}
+int rollDie(long sides) {
   std::random_device rd;
   std::mt19937 gen(rd());
   std::uniform_int_distribution<> dis(1, sides);
 
   int result = 0;
-  for (int i = 0; i < quantity; i++) {
-    result += dis(gen);
-  }
+  // for (int i = 0; i < quantity; i++) {
+  result += dis(gen);
+  //}
 
   return result;
 }
