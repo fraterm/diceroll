@@ -116,6 +116,10 @@ int main(int argc, char *argv[]) {
 
 // function definitions
 std::string parseDiceString(std::string diceString) {
+  // initialize throw dice and sides values to sensible defaults if not parsed
+  long numThrows = 1;
+  long numDice = 1;
+  long numSides = 6;
   std::string resultString = "";
   // compose a suitable rolldice compatible regex with named groups over
   // several lines
@@ -147,11 +151,6 @@ std::string parseDiceString(std::string diceString) {
         std::cout << "\tsidestype: " << staticmatch.str("sidestype") << " " << std::endl;
 
       } // debug printing
-      // initialize throw dice and sides values to sensible defaults if not
-      // parsed
-      long numThrows = 1;
-      long numDice = 1;
-      long numSides = 6;
 
       std::cout << "c_str run on throws becomes:" << staticmatch.str("throws").std::string::c_str() << std::endl;
       std::cout << std::boolalpha; // turn on printing boolean true/false rather
