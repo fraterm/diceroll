@@ -1,7 +1,7 @@
 # diceroll
 ![Diceroll Logo](./Diceroll_Logo.svg)
 
-## A C++ Command Line Dice Rolling Utility
+## A C++ Command Line Dice Rolling Program
 
 * uses the args argument parser as a CLI parser API https://taywee.github.io/args
 * using the https://github.com/ZimProjects srell std::regex-like librarylibrary to parse the dice input strings https://www.akenotsuki.com/misc/srell/
