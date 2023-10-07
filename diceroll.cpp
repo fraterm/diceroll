@@ -108,8 +108,8 @@ int main(int argc, char *argv[]) {
     /*do appropriate interactive flag stuff*/
     g_arg_interactive_flag = true;
   }
-  // done with arg parsing nonsense
-  // now do the things
+  // done with arg parsing
+  // now do things
   for (auto &&diceString : diceStringList) {
     // for now echo entered dice strings
     std::cout << "running parseDiceString(" << diceString << ")\n";
