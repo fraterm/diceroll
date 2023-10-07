@@ -1,13 +1,13 @@
-/* diceroll - a command line dice rolling program
+/* diceroll - A C++ Command Line Dice Rolling Program * \
  *     _ _                    _ _
  *    | (_)                  | | |
  *  __| |_  ___ ___ _ __ ___ | | |
  * / _` | |/ __/ _ \ '__/ _ \| | |
  *| (_| | | (_|  __/ | | (_) | | |
  * \__,_|_|\___\___|_|  \___/|_|_|
- * A C++ Command Line C++ Dice Rolling Application
+ * A C++ Command Line Dice Rolling Program
  *
- * */
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #include <iostream>
 #include <random>
 #include <sstream>
@@ -24,6 +24,7 @@ const std::string g_version_string = "0.0.1";
 static bool g_arg_version_flag = false;
 static bool g_arg_separate_flag = false;
 static bool g_arg_interactive_flag = false;
+static bool g_arg_debug_flag = false;
 //
 // function declarations
 std::string parseDiceString(std::string);
@@ -42,6 +43,7 @@ int main(int argc, char *argv[]) {
   args::ArgumentParser argsParser("diceroll program", "@TODO Epilogue.");
   args::HelpFlag help(argsParser, "help", "Display this help menu",
                       {'h', "help"});
+  args::Flag debug(argsParser, "debug", "Set the debug flag", {'d', "debug"});
   args::Flag version(argsParser, "version",
                      "@TODO Display the version diceroll", {'v', "version"});
   args::Flag separate(
@@ -81,19 +83,24 @@ int main(int argc, char *argv[]) {
     std::cerr << argsParser;
     return 1;
   }
+  if (debug) {
+    /* do appropriate debug flag stuff */
+    g_arg_debug_flag = true;
+  }
   if (version) {
-    /* do appropriate version flag stuff and exit */
-    std::cout << "diceroll, " << "v" << g_version_string << std::endl;
+    /* do appropriate version flag stuff and then exit */
+    std::cout << "diceroll, "
+              << "v" << g_version_string << std::endl;
     std::cout << "Written by Michael Costello (fraterm@gmail.com)" << std::endl;
     return 0;
   }
-  if (separate) { 
+  if (separate) {
     /* do appropriate separate flag stuff */
-    g_arg_separate_flag=true;
+    g_arg_separate_flag = true;
   }
-  if (interactive) { 
-    /*do appropriate interactive flag stuff*/ 
-    g_arg_interactive_flag=true;
+  if (interactive) {
+    /*do appropriate interactive flag stuff*/
+    g_arg_interactive_flag = true;
   }
   return 0;
 }
@@ -123,7 +130,7 @@ std::string parseDiceString(std::string diceString) {
       for (int i = 0; i < staticmatch.size(); i++) {
         std::cout << "m.str(" << i << "):" << staticmatch.str(i) << std::endl;
       }
-      /* @TODO wrap with verbose arg */
+      /* @TODO wrap this debug output with verbose arg */
       std::cout << "throwgroup: " << staticmatch.str("throwgroup") << " "
                 << std::endl;
       std::cout << "\tthrows: " << staticmatch.str("throws") << " "
@@ -164,7 +171,7 @@ std::string parseDiceString(std::string diceString) {
         numDice = std::stol(staticmatch.str("numdice"));
         std::cout << "numDice is now:" << numDice << std::endl;
       }
-      // sidestype parsed is not empty 
+      // sidestype parsed is not empty
       if (!staticmatch.str("sidestype").std::string::empty()) {
         std::cout << "sidestype is not empty" << std::endl;
         // sidestype parsed is not a literal single % character.
@@ -177,6 +184,10 @@ std::string parseDiceString(std::string diceString) {
           numSides = std::stol(staticmatch.str("sidestype"));
         }
         std::cout << "numSides is now:" << numSides << std::endl;
+      } else {
+        // sidestype is empty therefore the default numSides is 6
+        numSides = 6;
+        std::cout << "numSides was empty and is now:" << numSides << std::endl;
       }
       // do/While
       std::cout << "numThrows:" << numThrows << std::endl;
