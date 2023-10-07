@@ -21,13 +21,12 @@
 // Global variables
 const std::string g_appname_string = "diceroll";
 const std::string g_version_string = "0.0.1";
-const std::string g_author_string =
-    "Written by Michael Costello (fraterm@gmail.com)";
+const std::string g_author_string = "Written by Michael Costello (fraterm@gmail.com)";
 // Global static arguments with g_arg_ prefix
+static bool g_arg_debug_flag = false;
 static bool g_arg_version_flag = false;
 static bool g_arg_separate_flag = false;
 static bool g_arg_interactive_flag = false;
-static bool g_arg_debug_flag = false;
 //
 // function declarations
 std::string parseDiceString(std::string);
@@ -44,26 +43,21 @@ int main(int argc, char *argv[]) {
 
   // set up the argument parser and arguments
   args::ArgumentParser argsParser(g_appname_string + " help",
-                                  g_appname_string +
-                                      " help for version:" + g_version_string);
-  args::HelpFlag help(argsParser, "help", "Display this help menu",
-                      {'h', "help"});
+                                  g_appname_string + " help for version:" + g_version_string);
+  args::HelpFlag help(argsParser, "help", "Display this help menu", {'h', "help"});
   args::Flag debug(argsParser, "debug", "Set the debug flag", {'d', "debug"});
-  args::Flag version(argsParser, "version",
-                     "Display the version of " + g_appname_string,
-                     {'v', "version"});
-  args::Flag separate(
-      argsParser, "separate",
-      "Print out the throw number as well as the separate value of each die "
-      "as well as operations and totals",
-      {'s', "separate"});
+  args::Flag version(argsParser, "version", "Display the version of " + g_appname_string, {'v', "version"});
+  args::Flag separate(argsParser, "separate",
+                      "Print out the throw number as well as the separate value of each die "
+                      "as well as operations and totals",
+                      {'s', "separate"});
   args::Flag interactive(argsParser, "interactive",
                          "@TODO interactive mode, diceroll terminal"
                          "interacts with the user in a command line way",
                          {'i', "interactive"});
   args::Group positionals(argsParser, "dice roll string");
-  args::PositionalList<std::string> diceStringList(
-      positionals, "dice strings", "parseable dice roll description strings");
+  args::PositionalList<std::string> diceStringList(positionals, "dice strings",
+                                                   "parseable dice roll description strings");
   args::CompletionFlag completion(argsParser, {"complete"});
   try {
     argsParser.ParseCLI(argc, argv);
@@ -125,12 +119,10 @@ std::string parseDiceString(std::string diceString) {
   std::string resultString = "";
   // compose a suitable rolldice compatible regex with named groups over
   // several lines
-  std::string regexString =
-      "^"
-      "(?<throwgroup>(?<throws>([0-9]){1,})(?<throwch>[x|X]){1}){0,}"
-      "(?<dicegroup>(?<numdice>[0-9]{1,})(?<dicechar>d|D){1}(?<sidestype>[0-9]{"
-      "0,}|%{1})){0,}"
-      "$";
+  std::string regexString = "^"
+                            "(?<throwgroup>(?<throws>([0-9]){1,})(?<throwch>[x|X]){1}){0,}"
+                            "(?<dicegroup>(?<numdice>[0-9]{1,})(?<dicechar>d|D){1}(?<sidestype>[0-9]{0,}|%{1})){0,}"
+                            "$";
 
   std::cout << "in parseDiceString(" << diceString << ")\n";
   try {
@@ -138,42 +130,33 @@ std::string parseDiceString(std::string diceString) {
     srell::regex expression(regexString);
     // static match
     srell::smatch staticmatch;
-    if (srell::regex_search(diceString, staticmatch, expression)) {
-      if (g_arg_debug_flag) {
+    if (srell::regex_search(diceString, staticmatch, expression)) { // if regex_search successful
+      if (g_arg_debug_flag) {                                       // debug printing
         std::cout << "regex_search true: " << std::endl;
         std::cout << "m.size is:" << staticmatch.size() << std::endl;
-      }
-      for (int i = 0; i < staticmatch.size(); i++) {
-        std::cout << "m.str(" << i << "):" << staticmatch.str(i) << std::endl;
-      }
-      /* @TODO wrap this debug output with verbose arg */
-      std::cout << "throwgroup: " << staticmatch.str("throwgroup") << " "
-                << std::endl;
-      std::cout << "\tthrows: " << staticmatch.str("throws") << " "
-                << std::endl;
-      std::cout << "\tthrowch: " << staticmatch.str("throwch") << " "
-                << std::endl;
-      std::cout << "dicegroup: " << staticmatch.str("dicegroup") << " "
-                << std::endl;
-      std::cout << "\tnumdice: " << staticmatch.str("numdice") << " "
-                << std::endl;
-      std::cout << "\tdicechar: " << staticmatch.str("dicechar") << " "
-                << std::endl;
-      std::cout << "\tsidestype: " << staticmatch.str("sidestype") << " "
-                << std::endl;
+        for (int i = 0; i < staticmatch.size(); i++) {
+          std::cout << "m.str(" << i << "):" << staticmatch.str(i) << std::endl;
+        }
+        /* @TODO wrap this debug output with verbose arg */
+        std::cout << "throwgroup: " << staticmatch.str("throwgroup") << " " << std::endl;
+        std::cout << "\tthrows: " << staticmatch.str("throws") << " " << std::endl;
+        std::cout << "\tthrowch: " << staticmatch.str("throwch") << " " << std::endl;
+        std::cout << "dicegroup: " << staticmatch.str("dicegroup") << " " << std::endl;
+        std::cout << "\tnumdice: " << staticmatch.str("numdice") << " " << std::endl;
+        std::cout << "\tdicechar: " << staticmatch.str("dicechar") << " " << std::endl;
+        std::cout << "\tsidestype: " << staticmatch.str("sidestype") << " " << std::endl;
 
+      } // debug printing
       // initialize throw dice and sides values to sensible defaults if not
       // parsed
       long numThrows = 1;
       long numDice = 1;
       long numSides = 6;
 
-      std::cout << "c_str run on throws becomes:"
-                << staticmatch.str("throws").std::string::c_str() << std::endl;
+      std::cout << "c_str run on throws becomes:" << staticmatch.str("throws").std::string::c_str() << std::endl;
       std::cout << std::boolalpha; // turn on printing boolean true/false rather
                                    // than 1/0
-      std::cout << "empty test on throws:"
-                << staticmatch.str("throws").std::string::empty() << std::endl;
+      std::cout << "empty test on throws:" << staticmatch.str("throws").std::string::empty() << std::endl;
       std::cout << std::noboolalpha; // turn off printing boolean true/false
                                      // rather than 1/0
 
@@ -194,8 +177,7 @@ std::string parseDiceString(std::string diceString) {
         if (staticmatch.str("sidestype") == "\%") {
           std::cout << "sidestype is a fancy % character" << std::endl;
           numSides = 100;
-          std::cout << "numSides was a fancy % and is now:" << numSides
-                    << std::endl;
+          std::cout << "numSides was a fancy % and is now:" << numSides << std::endl;
         } else {
           numSides = std::stol(staticmatch.str("sidestype"));
         }
