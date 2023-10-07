@@ -110,6 +110,12 @@ int main(int argc, char *argv[]) {
   }
   // done with arg parsing nonsense
   // now do the things
+  for (auto &&diceString : diceStringList) {
+    // for now echo entered dice strings
+    std::cout << "running parseDiceString(" << diceString << ")\n";
+    std::string result = parseDiceString(diceString);
+    std::cout << "result:" << result << "\n";
+  }
   // if successful when done return 0
   return 0;
 }
@@ -120,11 +126,10 @@ std::string parseDiceString(std::string diceString) {
   // compose a suitable rolldice compatible regex with named groups over
   // several lines
   std::string regexString =
-
       "^"
       "(?<throwgroup>(?<throws>([0-9]){1,})(?<throwch>[x|X]){1}){0,}"
-      "(?<dicegroup>(?<numdice>[0-9]{1,})(?<dicechar>d|D){1}(?<sidestype>"
-      "[0-9]{0,}|%{1})){0,}"
+      "(?<dicegroup>(?<numdice>[0-9]{1,})(?<dicechar>d|D){1}(?<sidestype>[0-9]{"
+      "0,}|%{1})){0,}"
       "$";
 
   std::cout << "in parseDiceString(" << diceString << ")\n";
@@ -200,15 +205,8 @@ std::string parseDiceString(std::string diceString) {
         numSides = 6;
         std::cout << "numSides was empty and is now:" << numSides << std::endl;
       }
-      // do/While
+      // @TODO ready to pass parameters and throw the dice now ?
       std::cout << "numThrows:" << numThrows << std::endl;
-      // std::cout << "matchstr: " << m.str("matchstr") << " " <<
-      // std::endl;
-      // if ( m.str("throwgroup") ) {
-      // std::cout << "m.size() " << m.size << std::endl;
-      // std::cout << "m.match_results.size= " << m.match_results();
-      //}else{
-      //}
     } else {
       std::cout << "regex_search false" << std::endl;
       return "";
@@ -216,7 +214,7 @@ std::string parseDiceString(std::string diceString) {
   } catch (srell::regex_error &e) {
     // Syntax error in the regular expressioa
     std::cerr << "srell::regex_error occurred:" << e.what() << std::endl;
-    // Crash / Return /
+    // Crash / Return / Empty String
     return "";
   }
   // q = number of dice, s = sides, m=post modifier
