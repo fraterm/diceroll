@@ -16,7 +16,7 @@
 {#x}{#}d[#|%]
 ```
 
-which becomes an ECMAScript (JavaScript) regex
+which becomes an ECMAScript (JavaScript) regex with named-groups
 
 currently translated to a an srell::regex string with posix-classes and named-groups thusly:
 
@@ -40,7 +40,7 @@ Stage the string parse into parts:
   Number and type of dice part required
 
 ## Future Plans 
-* If there's no string, drop into a "rolling shell" or "rolling session" where you type dicestrings and they are parsed from the line... 
+* If there are no positional string arguments, drop into a "rolling shell" or "rolling session" where you type dicestrings and they are parsed from the line... 
 * fill in the options existing to operate similarly to rolldice
 * someday I might integrate with GNOLLs amazing TTRPG dice string parser.
 * Profit?
