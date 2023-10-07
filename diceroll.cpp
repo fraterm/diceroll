@@ -19,7 +19,10 @@
 // SRELL std regex like library by a kenotsuki https://akenotsuki.com
 #include "srell.hpp"
 // Global variables
+const std::string g_appname_string = "diceroll";
 const std::string g_version_string = "0.0.1";
+const std::string g_author_string =
+    "Written by Michael Costello (fraterm@gmail.com)";
 // Global static arguments with g_arg_ prefix
 static bool g_arg_version_flag = false;
 static bool g_arg_separate_flag = false;
@@ -40,16 +43,19 @@ int main(int argc, char *argv[]) {
   std::string dice_string = "";
 
   // set up the argument parser and arguments
-  args::ArgumentParser argsParser("diceroll program", "@TODO Epilogue.");
+  args::ArgumentParser argsParser(g_appname_string + " help",
+                                  g_appname_string +
+                                      " help for version:" + g_version_string);
   args::HelpFlag help(argsParser, "help", "Display this help menu",
                       {'h', "help"});
   args::Flag debug(argsParser, "debug", "Set the debug flag", {'d', "debug"});
   args::Flag version(argsParser, "version",
-                     "@TODO Display the version diceroll", {'v', "version"});
+                     "Display the version of " + g_appname_string,
+                     {'v', "version"});
   args::Flag separate(
       argsParser, "separate",
-      "print out the Throw/Roll number and separate output of each die "
-      "separately as well as operations and totals",
+      "Print out the throw number as well as the separate value of each die "
+      "as well as operations and totals",
       {'s', "separate"});
   args::Flag interactive(argsParser, "interactive",
                          "@TODO interactive mode, diceroll terminal"
@@ -61,6 +67,7 @@ int main(int argc, char *argv[]) {
   args::CompletionFlag completion(argsParser, {"complete"});
   try {
     argsParser.ParseCLI(argc, argv);
+    // parse all them there delicious diceString vectors
     for (auto &&diceString : diceStringList) {
       // for now echo entered dice strings
       std::cout << "running parseDiceString(" << diceString << ")\n";
@@ -76,12 +83,12 @@ int main(int argc, char *argv[]) {
   } catch (const args::ParseError &e) {
     std::cerr << e.what() << std::endl;
     std::cerr << argsParser;
-    return 1;
+    return 1; // error
   } catch (const args::ValidationError &e) {
 
     std::cerr << e.what() << std::endl;
     std::cerr << argsParser;
-    return 1;
+    return 1; // error
   }
   if (debug) {
     /* do appropriate debug flag stuff */
@@ -89,9 +96,8 @@ int main(int argc, char *argv[]) {
   }
   if (version) {
     /* do appropriate version flag stuff and then exit */
-    std::cout << "diceroll, "
-              << "v" << g_version_string << std::endl;
-    std::cout << "Written by Michael Costello (fraterm@gmail.com)" << std::endl;
+    std::cout << g_appname_string << " v" << g_version_string << std::endl;
+    std::cout << g_author_string << std::endl;
     return 0;
   }
   if (separate) {
@@ -102,6 +108,9 @@ int main(int argc, char *argv[]) {
     /*do appropriate interactive flag stuff*/
     g_arg_interactive_flag = true;
   }
+  // done with arg parsing nonsense
+  // now do the things
+  // if successful when done return 0
   return 0;
 }
 
@@ -125,8 +134,10 @@ std::string parseDiceString(std::string diceString) {
     // static match
     srell::smatch staticmatch;
     if (srell::regex_search(diceString, staticmatch, expression)) {
-      std::cout << "regex_search true: " << std::endl;
-      std::cout << "m.size is:" << staticmatch.size() << std::endl;
+      if (g_arg_debug_flag) {
+        std::cout << "regex_search true: " << std::endl;
+        std::cout << "m.size is:" << staticmatch.size() << std::endl;
+      }
       for (int i = 0; i < staticmatch.size(); i++) {
         std::cout << "m.str(" << i << "):" << staticmatch.str(i) << std::endl;
       }
