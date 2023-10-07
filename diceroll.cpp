@@ -150,24 +150,25 @@ std::string parseDiceString(std::string diceString) {
         std::cout << "\tdicechar: " << staticmatch.str("dicechar") << " " << std::endl;
         std::cout << "\tsidestype: " << staticmatch.str("sidestype") << " " << std::endl;
 
-      } // debug printing
+        std::cout << "c_str run on throws becomes:" << staticmatch.str("throws").std::string::c_str() << std::endl;
+        std::cout << std::boolalpha; // turn on printing boolean true/false rather
+                                     // than 1/0
+        std::cout << "empty test on throws:" << staticmatch.str("throws").std::string::empty() << std::endl;
+        std::cout << std::noboolalpha; // turn off printing boolean true/false
+                                       // rather than 1/0
 
-      std::cout << "c_str run on throws becomes:" << staticmatch.str("throws").std::string::c_str() << std::endl;
-      std::cout << std::boolalpha; // turn on printing boolean true/false rather
-                                   // than 1/0
-      std::cout << "empty test on throws:" << staticmatch.str("throws").std::string::empty() << std::endl;
-      std::cout << std::noboolalpha; // turn off printing boolean true/false
-                                     // rather than 1/0
-
-      if (!staticmatch.str("throws").std::string::empty()) {
-        std::cout << "throws is not empty" << std::endl;
-        numThrows = std::stol(staticmatch.str("throws"));
-        std::cout << "numThrows is now:" << numThrows << std::endl;
+      }                                                      // debug printing
+      if (!staticmatch.str("throws").std::string::empty()) { // throws value not empty
+        numThrows = std::stol(staticmatch.str("throws"));    // assign throws var
+        if (g_arg_debug_flag) {
+          std::cout << "throws is not empty have set numThrows to " << numThrows << std::endl;
+        }
       }
       if (!staticmatch.str("numdice").std::string::empty()) {
-        std::cout << "numdice is not empty" << std::endl;
         numDice = std::stol(staticmatch.str("numdice"));
-        std::cout << "numDice is now:" << numDice << std::endl;
+        if (g_arg_debug_flag) {
+          std::cout << "numdice is not empty have set numDice to " << numDice << std::endl;
+        }
       }
       // sidestype parsed is not empty
       if (!staticmatch.str("sidestype").std::string::empty()) {
