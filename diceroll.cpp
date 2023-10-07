@@ -87,9 +87,13 @@ int main(int argc, char *argv[]) {
     std::cout << "Written by Michael Costello (fraterm@gmail.com)" << std::endl;
     return 0;
   }
-  if (separate) { /*do appropriate separate flag stuff*/
+  if (separate) { 
+    /* do appropriate separate flag stuff */
+    g_arg_separate_flag=true;
   }
-  if (interactive) { /*do appropriate interactive flag stuff*/
+  if (interactive) { 
+    /*do appropriate interactive flag stuff*/ 
+    g_arg_interactive_flag=true;
   }
   return 0;
 }
@@ -160,9 +164,10 @@ std::string parseDiceString(std::string diceString) {
         numDice = std::stol(staticmatch.str("numdice"));
         std::cout << "numDice is now:" << numDice << std::endl;
       }
+      // sidestype parsed is not empty 
       if (!staticmatch.str("sidestype").std::string::empty()) {
         std::cout << "sidestype is not empty" << std::endl;
-        // not empty and is not a literal single % character.
+        // sidestype parsed is not a literal single % character.
         if (staticmatch.str("sidestype") == "\%") {
           std::cout << "sidestype is a fancy % character" << std::endl;
           numSides = 100;
