@@ -117,6 +117,7 @@ std::string parseDiceString(std::string diceString) {
   long numDice = 1;
   long numSides = 6;
   std::string resultString = "";
+  std::string smatchFailedReasonString = "unknown"; // @TODO
   // compose a suitable rolldice compatible regex with named groups over
   // several lines
   std::string regexString = "^"
@@ -196,7 +197,7 @@ std::string parseDiceString(std::string diceString) {
     } else {
       // @TODO improve bad dice string parse with a better error message
       std::cout << g_appname_string << ":"
-                << "problem with a malformed dice string, (@TODO reason)" << std::endl;
+                << " problem with a malformed dice string, (" << smatchFailedReasonString << ")" << std::endl;
       return "";
     }
   } catch (srell::regex_error &e) {
@@ -273,7 +274,11 @@ std::string performDiceRoll(long numThrows, long numDice, long numSides) {
     } else {
       stringStream << rollTotal;
     }
-    // std::cout << "here there be dragons???" << std::endl;
+    if (g_arg_debug_flag) {
+      std::cout << "between throws (here there be dragons?)" << std::endl;
+    }
+    // reset rollTotal between throws
+    rollTotal = 0;
   } // for numThrows loop end
   // append stringStream to resultString then return resultString to caller
   resultString.append(stringStream.str());
