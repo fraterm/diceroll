@@ -262,7 +262,7 @@ std::string performDiceRoll(long numThrows, long numDice, long numSides) {
           // no dice remain and separate_flag is true
           //  end the parenthesis
           stringStream << ")";
-        } else { // will add a space after each single roll result except at end
+        } else { // adds a space after each single roll result except at end
           stringStream << " ";
         }
       }
