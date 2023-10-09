@@ -8,16 +8,15 @@
  * A C++ Command Line Dice Rolling Program
  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+// standard library includes
 #include <iostream>
 #include <random>
 #include <sstream>
 #include <string>
 #include <vector>
 // non standard library includes
-// args library for command line parsing https://github.com/taywee/args
-#include "args.hxx"
-// SRELL std regex like library by a kenotsuki https://akenotsuki.com
-#include "srell.hpp"
+#include "args.hxx"  // args library for command line parsing https://github.com/taywee/args
+#include "srell.hpp" // SRELL std regex like library by a kenotsuki https://akenotsuki.com
 // Global variables
 const std::string g_appname_string = "diceroll";
 const std::string g_version_string = "0.0.1";
