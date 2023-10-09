@@ -117,7 +117,10 @@ std::string parseDiceString(std::string diceString) {
   // several lines
   std::string regexString = "^"
                             "(?<throwgroup>(?<throws>([0-9]){1,})(?<throwch>[x|X]){1}){0,}"
-                            "(?<dicegroup>(?<numdice>[0-9]{1,})(?<dicechar>d|D){1}(?<sidestype>[0-9]{0,}|%{1})){0,}"
+                            "(?<dicegroup>(?<numdice>[0-9]{1,})(?<dicechar>[d|D]){1}(?<sidestype>[0-9]{0,}|%{1})){0,}"
+                            "(?<multgroup>(?<multchar>[*]{1})(?<multnum>[0-9]{1,})){0,}"
+                            //"(?<addsubgroup>(?<addsubchar>[+|-]{1})(?<addsubnum>[0-9]{1,}){0,})"
+                            //"(?<droplowestgroup>(?<droplowestchar>[s]{1})(?<droplowestnum>[0-9]{1,}){0,}"
                             "$";
 
   if (g_arg_debug_flag) { // debug printing
