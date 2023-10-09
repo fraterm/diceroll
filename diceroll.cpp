@@ -36,10 +36,6 @@ std::string performDiceRoll(long throws, long dice, long sides);
 long rollDie(long sides);
 
 int main(int argc, char *argv[]) {
-  // help option
-  // initially assume a single dice string
-  // eventually become a vector of possibly multiple dicestrings
-  std::string dice_string = "";
 
   // set up the argument parser and arguments
   args::ArgumentParser argsParser(g_appname_string + " help",
