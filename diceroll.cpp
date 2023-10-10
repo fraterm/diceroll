@@ -118,9 +118,9 @@ std::string parseDiceString(std::string diceString) {
   std::string regexString = "^"
                             "(?<throwgroup>(?<throws>([0-9]){1,})(?<throwch>[x|X]){1}){0,}"
                             "(?<dicegroup>(?<numdice>[0-9]{1,})(?<dicechar>[d|D]){1}(?<sidestype>[0-9]{0,}|%{1})){0,}"
-                            "(?<multgroup>(?<multchar>[*]{1})(?<multnum>[0-9]{1,})){0,}"
-                            //"(?<addsubgroup>(?<addsubchar>[+|-]{1})(?<addsubnum>[0-9]{1,}){0,})"
-                            //"(?<droplowestgroup>(?<droplowestchar>[s]{1})(?<droplowestnum>[0-9]{1,}){0,}"
+                            "(?<multgroup>(?<multchar>[*]){1}(?<multnum>[0-9]){1,}){0,}"
+                            "(?<addsubgroup>(?<addsubchar>[+|-]){1}(?<addsubnum>[0-9]){1,}){0,}"
+                            "(?<droplowestgroup>(?<droplowestchar>[s]){1}(?<droplowestnum>[0-9]){1,}){0,}"
                             "$";
 
   if (g_arg_debug_flag) { // debug printing
@@ -145,10 +145,18 @@ std::string parseDiceString(std::string diceString) {
         std::cout << "\tnumdice: " << staticmatch.str("numdice") << " " << std::endl;
         std::cout << "\tdicechar: " << staticmatch.str("dicechar") << " " << std::endl;
         std::cout << "\tsidestype: " << staticmatch.str("sidestype") << " " << std::endl;
+        std::cout << "multgroup: " << staticmatch.str("multgroup") << " " << std::endl;
+        std::cout << "\tmultchar: " << staticmatch.str("multchar") << " " << std::endl;
+        std::cout << "\tmultnum: " << staticmatch.str("multnum") << " " << std::endl;
+        std::cout << "addsubgroup: " << staticmatch.str("addsubgroup") << " " << std::endl;
+        std::cout << "\taddsubchar: " << staticmatch.str("addsubchar") << " " << std::endl;
+        std::cout << "\taddsubnum: " << staticmatch.str("addsubnum") << " " << std::endl;
+        std::cout << "droplowestgroup: " << staticmatch.str("droplowestgroup") << " " << std::endl;
+        std::cout << "\tdroplowestchar: " << staticmatch.str("droplowestchar") << " " << std::endl;
+        std::cout << "\tdroplowestnum: " << staticmatch.str("droplowestnum") << " " << std::endl;
 
-        std::cout << "c_str run on throws becomes:" << staticmatch.str("throws").std::string::c_str() << std::endl;
-        std::cout << std::boolalpha; // turn on printing boolean true/false rather
-                                     // than 1/0
+        std::cout << std::boolalpha; // turn on printing boolean true/false
+                                     // rather than 1/0
         std::cout << "empty test on throws:" << staticmatch.str("throws").std::string::empty() << std::endl;
         std::cout << std::noboolalpha; // turn off printing boolean true/false
                                        // rather than 1/0
