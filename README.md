@@ -16,6 +16,16 @@ Initially uses the same format that the rolldice C program uses:
 {#x}{#}d[#|%]{*#}{+/-#}{s#}
 ```
 
+### number of rolls or throws of the dice group specified later, optional.
+```
+{#x}
+```
+
+### number of dice then their sides, or the % to represent 100 beginning required
+```
+{#}d[#|%]
+```
+
 Which becomes an ECMAScript (JavaScript) regex with named-groups parseable by srell regex library:  
 
 ```
