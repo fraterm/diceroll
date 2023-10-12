@@ -117,7 +117,7 @@ std::string parseDiceString(std::string diceString) {
   // several lines
   std::string regexString = "^"
                             "(?<throwgroup>(?<throws>([0-9]){1,})(?<throwch>[x|X]){1}){0,}"
-                            "(?<dicegroup>(?<numdice>[0-9]{1,})(?<dicechar>[d|D]){1}(?<sidestype>[0-9]{0,}|%{1})){0,}"
+                            "(?<dicegroup>(?<numdice>[0-9]{1,})(?<dicechar>[d|D]){1}(?<sidestype>[0-9]{0,}|[%]{1})){0,}"
                             "(?<multgroup>(?<multchar>[*]){1}(?<multnum>[0-9]){1,}){0,}"
                             "(?<addsubgroup>(?<addsubchar>[+|-]){1}(?<addsubnum>[0-9]){1,}){0,}"
                             "(?<droplowestgroup>(?<droplowestchar>[s]){1}(?<droplowestnum>[0-9]){1,}){0,}"
@@ -216,7 +216,7 @@ std::string parseDiceString(std::string diceString) {
   return resultString;
 }
 
-// std::string performDiceRoll(long numThrows, long numDice, long numSides) {
+// std::string performDiceRoll(long numThrows, long numDice, long numSides);  
 std::string performDiceRoll(long numThrows, long numDice, long numSides) {
   // if g_opt_s is true be verbose
   long throwCounter = 0;
@@ -226,16 +226,24 @@ std::string performDiceRoll(long numThrows, long numDice, long numSides) {
   std::stringstream stringStream;
   std::string resultString = "";
   if (g_arg_debug_flag) {
-    std::cout << "DEBUG: performDiceRoll(" << numThrows << "," << numDice << "," << numSides << ")\n";
+    std::cout << "DEBUG: performDiceRoll(" 
+              << numThrows << "," 
+              << numDice << "," 
+              << numSides << ","
+              //<< numSides << ","
+              //<< numSides << ","
+              //<< numSides << ","
+              ")\n";
   }
-  // change to nested for loops do while is doing weird stuff
+  // for every numThrows
   for (int i = 0; i < numThrows; ++i) {
     throwCounter++; // increment throwCounter
     if (g_arg_debug_flag) {
-      std::cout << "DEBUG: in the numThrows for loop afterthrowCounter postincrement::"
-                << "performDiceRoll(" << numThrows << "," << numDice << "," << numSides << ")"
-                << "\n"
-                << "\tthrowCounter:" << throwCounter << " rollCount:" << rollCount << "throwTotal:" << rollTotal
+      std::cout << "beginning of for every numThrows\n"
+                << "\t" 
+                << "throwCounter:" << throwCounter 
+                << " rollCount:" << rollCount 
+                << " throwTotal:" << rollTotal 
                 << std::endl;
     }
     if (i > 0) {
