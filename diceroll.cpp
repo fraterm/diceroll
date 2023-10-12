@@ -26,12 +26,13 @@ static bool g_arg_debug_flag = false;
 static bool g_arg_version_flag = false;
 static bool g_arg_separate_flag = false;
 static bool g_arg_interactive_flag = false;
-//
 // function declarations
+// parses Dice Strings
 std::string parseDiceString(std::string);
-
-std::string performDiceRoll(long throws, long dice, long sides);
-
+// performs Dice Throws
+std::string performDiceRoll(long numThrows, long numDice, long numSides, long numMult, char chAddSub, long numAddSub,
+                            long numDropLow);
+// generates random long integers from 1 to sides
 long rollDie(long sides);
 
 int main(int argc, char *argv[]) {
@@ -111,6 +112,10 @@ std::string parseDiceString(std::string diceString) {
   long numThrows = 1;
   long numDice = 1;
   long numSides = 6;
+  long numMult = 1;
+  char chAddSub = '\0'; // default to null character
+  long numAddSub = 0;
+  long numDropLow = 0;
   std::string resultString = "";
   std::string smatchFailedReasonString = "unknown"; // @TODO
   // compose a suitable rolldice compatible regex with named groups over
@@ -118,9 +123,9 @@ std::string parseDiceString(std::string diceString) {
   std::string regexString = "^"
                             "(?<throwgroup>(?<throws>([0-9]){1,})(?<throwch>[x|X]){1}){0,}"
                             "(?<dicegroup>(?<numdice>[0-9]{1,})(?<dicechar>[d|D]){1}(?<sidestype>[0-9]{0,}|[%]{1})){0,}"
-                            "(?<multgroup>(?<multchar>[*]){1}(?<multnum>[0-9]){1,}){0,}"
-                            "(?<addsubgroup>(?<addsubchar>[+|-]){1}(?<addsubnum>[0-9]){1,}){0,}"
-                            "(?<droplowestgroup>(?<droplowestchar>[s]){1}(?<droplowestnum>[0-9]){1,}){0,}"
+                            "(?<multgroup>(?<charmult>[*]){1}(?<nummult>[0-9]){1,}){0,}"
+                            "(?<addsubgroup>(?<chaddsub>[+|-]){1}(?<numaddsub>[0-9]){1,}){0,}"
+                            "(?<droplowgroup>(?<chardroplow>[s]){1}(?<numdroplow>[0-9]){1,}){0,}"
                             "$";
 
   if (g_arg_debug_flag) { // debug printing
@@ -146,14 +151,14 @@ std::string parseDiceString(std::string diceString) {
         std::cout << "\tdicechar: " << staticmatch.str("dicechar") << " " << std::endl;
         std::cout << "\tsidestype: " << staticmatch.str("sidestype") << " " << std::endl;
         std::cout << "multgroup: " << staticmatch.str("multgroup") << " " << std::endl;
-        std::cout << "\tmultchar: " << staticmatch.str("multchar") << " " << std::endl;
-        std::cout << "\tmultnum: " << staticmatch.str("multnum") << " " << std::endl;
+        std::cout << "\tcharmult: " << staticmatch.str("charmult") << " " << std::endl;
+        std::cout << "\tnummult: " << staticmatch.str("nummult") << " " << std::endl;
         std::cout << "addsubgroup: " << staticmatch.str("addsubgroup") << " " << std::endl;
-        std::cout << "\taddsubchar: " << staticmatch.str("addsubchar") << " " << std::endl;
-        std::cout << "\taddsubnum: " << staticmatch.str("addsubnum") << " " << std::endl;
-        std::cout << "droplowestgroup: " << staticmatch.str("droplowestgroup") << " " << std::endl;
-        std::cout << "\tdroplowestchar: " << staticmatch.str("droplowestchar") << " " << std::endl;
-        std::cout << "\tdroplowestnum: " << staticmatch.str("droplowestnum") << " " << std::endl;
+        std::cout << "\tchaddsub: " << staticmatch.str("chaddsub") << " " << std::endl;
+        std::cout << "\tnumaddsub: " << staticmatch.str("numaddsub") << " " << std::endl;
+        std::cout << "droplowgroup: " << staticmatch.str("droplowgroup") << " " << std::endl;
+        std::cout << "\tchardroplow: " << staticmatch.str("chardroplow") << " " << std::endl;
+        std::cout << "\tnumdroplow: " << staticmatch.str("numdroplow") << " " << std::endl;
 
         std::cout << std::boolalpha; // turn on printing boolean true/false
                                      // rather than 1/0
@@ -193,13 +198,41 @@ std::string parseDiceString(std::string diceString) {
           std::cout << "numSides was empty and is now:" << numSides << std::endl;
         }
       } // sidestype parsing if ends
+      // nummult isn't empty?
+      if (!staticmatch.str("nummult").std::string::empty()) { // nummult parsing if begins
+        numMult = std::stol(staticmatch.str("nummult"));
+        if (g_arg_debug_flag) {
+          std::cout << "numMult is now:" << numMult << std::endl;
+        }
+      }
+      if (!staticmatch.str("chaddsub").std::string::empty()) {
+        // convert string to c_str
+        chAddSub = (staticmatch.str("chaddsub").c_str()[0]);
+        if (g_arg_debug_flag) {
+          std::cout << "chAddSub is now:" << chAddSub << std::endl;
+        }
+      }
+      if (!staticmatch.str("numaddsub").std::string::empty()) {
+        numAddSub = std::stol(staticmatch.str("numaddsub"));
+        if (g_arg_debug_flag) {
+          std::cout << "staticmatch.str(\"numaddsub\") is not empty" << std::endl;
+          std::cout << "numAddSub is now:" << numAddSub << std::endl;
+        }
+      }
+      if (!staticmatch.str("numdroplow").std::string::empty()) {
+        numDropLow = std::stol(staticmatch.str("numdroplow"));
+        if (g_arg_debug_flag) {
+          std::cout << "staticmatch.str(\"numdroplow\") is not empty" << std::endl;
+          std::cout << "numDropLow is now:" << numDropLow << std::endl;
+        }
+      }
       // ready to pass parameters and throw the dice now ?
       if (g_arg_debug_flag) {
         std::cout << "ready to pass parameters and throw dice\n";
         std::cout << "calling and returning resultString = performDiceRoll(" << numThrows << "," << numDice << ","
                   << numSides << ")" << std::endl;
       }
-      resultString = performDiceRoll(numThrows, numDice, numSides);
+      resultString = performDiceRoll(numThrows, numDice, numSides, numMult, chAddSub, numAddSub, numDropLow);
     } else {
       // @TODO improve bad dice string parse with a better error message
       std::cout << g_appname_string << ":"
@@ -216,34 +249,30 @@ std::string parseDiceString(std::string diceString) {
   return resultString;
 }
 
-// std::string performDiceRoll(long numThrows, long numDice, long numSides);  
-std::string performDiceRoll(long numThrows, long numDice, long numSides) {
+std::string performDiceRoll(long numThrows, long numDice, long numSides, long numMult, char chAddSub, long numAddSub,
+                            long numDropLow) {
   // if g_opt_s is true be verbose
   long throwCounter = 0;
   long rollCount = 0;
   long rollTotal = 0;
-  // for easy unconversion of
+  // stream to load with << for eventual return at end
+  // collection of rolls
+  std::vector<long> rollVector;
+  // so that lowest n can be dropped depending on args
+  std::vector<long> dropVector;
   std::stringstream stringStream;
   std::string resultString = "";
   if (g_arg_debug_flag) {
-    std::cout << "DEBUG: performDiceRoll(" 
-              << numThrows << "," 
-              << numDice << "," 
-              << numSides << ","
-              //<< numSides << ","
-              //<< numSides << ","
-              //<< numSides << ","
-              ")\n";
+    std::cout << "DEBUG: performDiceRoll(" << numThrows << "," << numDice << "," << numSides << "," << numMult << ","
+              << chAddSub << "," << numAddSub << "," << numDropLow << ")" << std::endl;
   }
   // for every numThrows
   for (int i = 0; i < numThrows; ++i) {
     throwCounter++; // increment throwCounter
     if (g_arg_debug_flag) {
       std::cout << "beginning of for every numThrows\n"
-                << "\t" 
-                << "throwCounter:" << throwCounter 
-                << " rollCount:" << rollCount 
-                << " throwTotal:" << rollTotal 
+                << "\t"
+                << "throwCounter:" << throwCounter << " rollCount:" << rollCount << " throwTotal:" << rollTotal
                 << std::endl;
     }
     if (i > 0) {
@@ -260,15 +289,14 @@ std::string performDiceRoll(long numThrows, long numDice, long numSides) {
     for (int j = 0; j < numDice; j++) {
       int singleDieResult = rollDie(numSides);
       if (g_arg_debug_flag) {
-        std::cout << "DEBUG: in the numDice for loop gathering ::singleDieResult::"
-                  << "performDiceRoll(" << numThrows << "," << numDice << "," << numSides << ")"
-                  << "\n"
-                  << "\tthrowCounter:" << throwCounter << " rollCount:" << rollCount << " throwTotal:" << rollTotal
-                  << " for_loop_counter j:" << j << "numDice:" << numDice << std::endl;
+        std::cout << " DEBUG: "
+                  << " for_loop_counter j: " << j << " numDice: " << numDice << " throwCounter: " << throwCounter
+                  << " rollCount: " << rollCount << " rollTotal: " << rollTotal << std::endl;
       }
       if (g_arg_separate_flag) {
         stringStream << singleDieResult;
       }
+      // add to rollTotal in the simple case
       rollTotal += singleDieResult;
       // numDice--;
       if (g_arg_separate_flag) {
@@ -284,6 +312,32 @@ std::string performDiceRoll(long numThrows, long numDice, long numSides) {
     // set up a string stream with which to
     // append die results to the result stream:
     if (g_arg_separate_flag) {
+      if (numMult > 1) {
+        stringStream << " * " << numMult;
+      }
+      // if chAddSub +
+      if (chAddSub == '+') {
+        //
+        stringStream << " + " << numAddSub;
+      }
+      // if chAddSub -
+      if (chAddSub == '-') {
+        stringStream << " - " << numAddSub;
+      }
+      // apply multiplication to total here first then apply addition or subtraction to total
+      if (numMult > 1) {
+        rollTotal *= numMult;
+        if (g_arg_debug_flag) {
+          std::cout << "rollTotal: " << rollTotal << " numMult: " << numMult << std::endl;
+        }
+      }
+      // if chAddSub +
+      if (chAddSub == '+') {
+        rollTotal += numAddSub;
+      }
+      if (chAddSub == '-') {
+        rollTotal -= numAddSub;
+      }
       stringStream << " = " << rollTotal;
     } else {
       stringStream << rollTotal;
