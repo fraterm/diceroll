@@ -10,30 +10,25 @@
 
 ## DICE STRING FORMAT
 
-* The dice string uses the following format by default (a subset of the rolldice dice string format)
-
-```
-{#x}{#}d[#|%]
-```
-
-which becomes an ECMAScript (JavaScript) regex with named-groups
-
-currently translated to a an srell::regex string with posix-classes and named-groups thusly:
-
-```
-	std::string regexString = 
-			"^" // beginning of string anchor
-			"(?<throwgroup>(?<throws>([0-9]){1,})(?<throwch>[x|X]){1}){0,}"  // throwgroup
-			"(?<dicegroup>(?<numdice>\\d{1,})(?<dicechar>d|D){1}(?<numsidesortype>\\d{0,}|%{1})){0,}"  // dicegroup
-			"$";  // end of string anchor
-```
-
-
-The format that rolldice C program uses:
+Initially uses the same format that the rolldice C program uses:
 
 ```
 {#x}{#}d[#|%]{*#}{+/-#}{s#}
 ```
+
+Which becomes an ECMAScript (JavaScript) regex with named-groups parseable by srell regex library:  
+
+```
+    std::string regexString = "^"
+                            "(?<throwgroup>(?<throws>([0-9]){1,})(?<throwch>[x|X]){1}){0,}"
+                            "(?<dicegroup>(?<numdice>[0-9]{1,})(?<dicechar>[d|D]){1}(?<sidestype>[0-9]{0,}|[%]{1})){0,}"
+                            "(?<multgroup>(?<multchar>[*]){1}(?<multnum>[0-9]){1,}){0,}"
+                            "(?<addsubgroup>(?<addsubchar>[+|-]){1}(?<addsubnum>[0-9]){1,}){0,}"
+                            "(?<droplowestgroup>(?<droplowestchar>[s]){1}(?<droplowestnum>[0-9]){1,}){0,}"
+                            "$";
+```
+
+
 
 Stage the string parse into parts:
   Number of throws part optional
