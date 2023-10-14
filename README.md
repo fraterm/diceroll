@@ -25,16 +25,17 @@ Initially uses the same format that the rolldice C program uses:
 ```
 {#}d[#|%]
 ```
+### @TODO explain the rest of the notation
 
 Which becomes an ECMAScript (JavaScript) regex with named-groups parseable by srell regex library:  
 
 ```
-    std::string regexString = "^"
-                            "(?<throwgroup>(?<throws>([0-9]){1,})(?<throwch>[x|X]){1}){0,}"
-                            "(?<dicegroup>(?<numdice>[0-9]{1,})(?<dicechar>[d|D]){1}(?<sidestype>[0-9]{0,}|[%]{1})){0,}"
-                            "(?<multgroup>(?<multchar>[*]){1}(?<multnum>[0-9]){1,}){0,}"
-                            "(?<addsubgroup>(?<addsubchar>[+|-]){1}(?<addsubnum>[0-9]){1,}){0,}"
-                            "(?<droplowestgroup>(?<droplowestchar>[s]){1}(?<droplowestnum>[0-9]){1,}){0,}"
+  std::string regexString = "^"
+                            "(?<throwgroup>(?<throws>[0-9]{1,})(?<throwch>[x|X]{1})){0,}"
+                            "(?<dicegroup>(?<numdice>[0-9]{1,})(?<dicechar>[d|D]{1})(?<sidestype>[0-9]{0,}|[%]{1})){0,}"
+                            "(?<multgroup>(?<charmult>[*]{1})(?<nummult>[0-9]{1,})){0,}"
+                            "(?<addsubgroup>(?<chaddsub>[+|-]{1})(?<numaddsub>[0-9]{1,})){0,}"
+                            "(?<droplowgroup>(?<chardroplow>[s]{1})(?<numdroplow>[0-9]{1,})){0,}"
                             "$";
 ```
 
